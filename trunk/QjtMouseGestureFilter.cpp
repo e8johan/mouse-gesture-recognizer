@@ -75,7 +75,7 @@ public:
     Qt::MouseButton gestureButton;
     bool tracing;
 
-    Gesture::MouseGestureRecognizer mgr;
+    Gesture::MouseGestureRecognizer *mgr;
 
     GestureList gestures;
     BridgeList bridges;
@@ -83,16 +83,19 @@ public:
 
 /**********************************************************/
 
-QjtMouseGestureFilter::QjtMouseGestureFilter( Qt::MouseButton gestureButton, QObject *parent ) : QObject( parent )
+QjtMouseGestureFilter::QjtMouseGestureFilter( bool allowDiagonals, Qt::MouseButton gestureButton, int minimumMovement, double minimumMatch, QObject *parent ) : QObject( parent )
 {
     d = new Private;
 
     d->gestureButton = gestureButton;
     d->tracing = false;
+    
+    d->mgr = new Gesture::MouseGestureRecognizer( minimumMovement, minimumMatch, allowDiagonals );
 }
 
 QjtMouseGestureFilter::~QjtMouseGestureFilter()
 {
+    delete d->mgr;
     delete d;
 }
 
@@ -110,7 +113,7 @@ void QjtMouseGestureFilter::addGesture( QjtMouseGesture *gesture )
     d->bridges.append( GestureCallbackToSignal( gesture ) );
     d->gestures.append( gesture );
 
-    d->mgr.addGestureDefinition( Gesture::GestureDefinition( dl, &(d->bridges[ d->bridges.size()-1 ]) ) );
+    d->mgr->addGestureDefinition( Gesture::GestureDefinition( dl, &(d->bridges[ d->bridges.size()-1 ]) ) );
 }
 
 void QjtMouseGestureFilter::clearGestures( bool deleteGestures )
@@ -121,7 +124,7 @@ void QjtMouseGestureFilter::clearGestures( bool deleteGestures )
 
     d->gestures.clear();
     d->bridges.clear();
-    d->mgr.clearGestureDefinitions();
+    d->mgr->clearGestureDefinitions();
 }
 
 bool QjtMouseGestureFilter::eventFilter( QObject *obj, QEvent *event )
@@ -157,7 +160,7 @@ bool QjtMouseGestureFilter::mouseButtonPressEvent( QObject *obj, QMouseEvent *ev
 {
     if( event->button() == d->gestureButton )
     {
-        d->mgr.startGesture( event->pos().x(), event->pos().y() );
+        d->mgr->startGesture( event->pos().x(), event->pos().y() );
         d->tracing = true;
 
         return true;
@@ -170,7 +173,7 @@ bool QjtMouseGestureFilter::mouseButtonReleaseEvent( QObject *obj, QMouseEvent *
 {
     if( d->tracing && event->button() == d->gestureButton )
     {
-        d->mgr.endGesture( event->pos().x(), event->pos().y() );
+        d->mgr->endGesture( event->pos().x(), event->pos().y() );
         d->tracing = false;
 
         return true;
@@ -183,7 +186,7 @@ bool QjtMouseGestureFilter::mouseMoveEvent( QObject *obj, QMouseEvent *event )
 {
     if( d->tracing )
     {
-        d->mgr.addPoint( event->pos().x(), event->pos().y() );
+        d->mgr->addPoint( event->pos().x(), event->pos().y() );
 
         return true;
     }
