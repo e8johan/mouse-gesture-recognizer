@@ -40,17 +40,6 @@
 using namespace Gesture;
 
 // Private data structure
-
-struct Pos
-{
-    Pos( int ix, int iy ) : x(ix), y(iy) {}
-
-    int x, y;
-};
-
-typedef std::list<Pos> PosList;
-typedef std::list<GestureDefinition> GestureList;
-
 struct MouseGestureRecognizer::Private
 {
     PosList positions;
@@ -58,22 +47,19 @@ struct MouseGestureRecognizer::Private
 
     int minimumMovement2;
     double minimumMatch;
+    
+    bool allowDiagonals;
 };
-
-// Support functions
-
-PosList limitDirections( const PosList &positions );
-PosList simplify( const PosList &positions );
-PosList removeShortest( const PosList &positions );
-int calcLength( const PosList &positions );
 
 // Class implementation
 
-MouseGestureRecognizer::MouseGestureRecognizer( int minimumMovement, double minimumMatch )
+MouseGestureRecognizer::MouseGestureRecognizer( int minimumMovement, double minimumMatch, bool allowDiagonals )
 {
     d = new Private;
     d->minimumMovement2 = minimumMovement*minimumMovement;
     d->minimumMatch = minimumMatch;
+    
+    d->allowDiagonals = allowDiagonals;
 }
 
 MouseGestureRecognizer::~MouseGestureRecognizer()
@@ -128,7 +114,7 @@ void MouseGestureRecognizer::addPoint( int x, int y )
 
 void MouseGestureRecognizer::recognizeGesture()
 {
-    PosList directions = simplify( limitDirections( d->positions ) );
+    PosList directions = simplify( limitDirections( d->positions, d->allowDiagonals ) );
     double minLength = calcLength( directions ) * d->minimumMatch;
 
     while( directions.size() > 0 && calcLength(directions) > minLength )
@@ -143,33 +129,53 @@ void MouseGestureRecognizer::recognizeGesture()
                 {
                     switch( *di )
                     {
+                    case UpLeft:
+                      if( !(pi->y < 0 && pi->x < 0) )
+                        match = false;
+                        
+                      break;
+                    case UpRight:
+                      if( !(pi->y < 0 && pi->x > 0) )
+                        match = false;
+                        
+                      break;
+                    case DownLeft:
+                      if( !(pi->y > 0 && pi->x < 0) )
+                        match = false;
+                        
+                      break;
+                    case DownRight:
+                      if( !(pi->y > 0 && pi->x > 0) )
+                        match = false;
+                        
+                      break;                      
                     case Up:
-                        if( pi->y >= 0 )
+                        if( pi->y >= 0 || pi->x != 0 )
                             match = false;
 
                         break;
                     case Down:
-                        if( pi->y <= 0 )
+                        if( pi->y <= 0 || pi->x != 0 )
                             match = false;
 
                         break;
                     case Left:
-                        if( pi->x >= 0 )
+                        if( pi->x >= 0 || pi->y != 0 )
                             match = false;
 
                         break;
                     case Right:
-                        if( pi->x <= 0 )
+                        if( pi->x <= 0 || pi->y != 0 )
                             match = false;
 
                         break;
                     case AnyHorizontal:
-                        if( pi->x == 0 )
+                        if( pi->x == 0 || pi->y != 0)
                             match = false;
 
                         break;
                     case AnyVertical:
-                        if( pi->y == 0 )
+                        if( pi->y == 0 || pi->x != 0)
                             match = false;
 
                         break;
@@ -211,7 +217,7 @@ void MouseGestureRecognizer::recognizeGesture()
  *
  *  Notice! This function converts the list to a set of relative moves instead of a set of screen coordinates.
  */
-PosList limitDirections( const PosList &positions )
+PosList MouseGestureRecognizer::limitDirections( const PosList &positions, bool allowDiagonals )
 {
     PosList res;
     int lastx, lasty;
@@ -232,20 +238,27 @@ PosList limitDirections( const PosList &positions )
 
             dx = ii->x - lastx;
             dy = ii->y - lasty;
-
-            if( dy > 0 )
+            
+            const int directions[8][2] = { {0, 15}, {0, -15}, {15, 0}, {-15, 0}, {10, 10}, {-10, 10}, {-10, -10}, {10, -10} };
+            int maxValue = 0;
+            int maxIndex = -1;
+            
+            for( int i=0; i<(allowDiagonals?8:4); i++ )
             {
-                if( dx > dy || -dx > dy )
-                    dy = 0;
-                else
-                    dx = 0;
-            }
+                int value = dx * directions[i][0] + dy * directions[i][1];
+                if( value > maxValue )
+                {
+                    value = maxValue;
+                    maxIndex = i;
+                }
+            }    
+            
+            if( maxIndex == -1 )
+              dx = dy = 0;
             else
             {
-                if( dx > -dy || -dx > -dy )
-                    dy = 0;
-                else
-                    dx = 0;
+              dx = directions[maxIndex][0]; // * abs(sqrt(maxValue))
+              dy = directions[maxIndex][1]; // * abs(sqrt(maxValue))
             }
 
             res.push_back( Pos( dx, dy ) );
@@ -263,7 +276,7 @@ PosList limitDirections( const PosList &positions )
  *
  *  Notice! This function expects a list of limited directions.
  */
-PosList simplify( const PosList &positions )
+PosList MouseGestureRecognizer::simplify( const PosList &positions )
 {
     PosList res;
     int lastdx = 0, lastdy = 0;
@@ -317,7 +330,7 @@ PosList simplify( const PosList &positions )
  *
  *  If there are several equally short segments, the first one is removed.
  */
-PosList removeShortest( const PosList &positions )
+PosList MouseGestureRecognizer::removeShortest( const PosList &positions )
 {
     PosList res;
 
@@ -356,7 +369,7 @@ PosList removeShortest( const PosList &positions )
 /*
  *  calcLength - calculates the total length of the movements from a list of relative movements.
  */
-int calcLength( const PosList &positions )
+int MouseGestureRecognizer::calcLength( const PosList &positions )
 {
     int res = 0;
 

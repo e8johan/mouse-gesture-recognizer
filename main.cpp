@@ -45,7 +45,7 @@
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    QjtMouseGestureFilter filter;
+    QjtMouseGestureFilter filter( true );
     MainWindow mw;
 
     QjtMouseGesture *g;
@@ -64,6 +64,13 @@ int main( int argc, char **argv )
     filter.addGesture( g );
     mw.connect( g, SIGNAL(gestured()), SLOT(setAll()) );
 
+    /* Set all by moving diagonaly up right */
+    dl.clear();
+    dl << UpRight;
+    g = new QjtMouseGesture( dl, &filter );
+    filter.addGesture( g );
+    mw.connect( g, SIGNAL(gestured()), SLOT(setAll()) );
+    
     /* When nothing else matches */
     dl.clear();
     dl << NoMatch;

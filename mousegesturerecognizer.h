@@ -54,7 +54,7 @@ public:
 /*
  *  The available directions.
  */
-typedef enum { Up, Down, Left, Right, AnyHorizontal, AnyVertical, NoMatch } Direction;
+typedef enum { Up, Down, Left, Right, AnyHorizontal, AnyVertical, UpLeft, UpRight, DownLeft, DownRight, NoMatch } Direction;
 /*
  *  A list of directions.
  */
@@ -71,10 +71,23 @@ struct GestureDefinition
     MouseGestureCallback *callbackClass;
 };
 
+/*
+ *  Data types for internal use
+ */
+struct Pos
+{
+    Pos( int ix, int iy ) : x(ix), y(iy) {}
+
+    int x, y;
+};
+
+typedef std::list<Pos> PosList;
+typedef std::list<GestureDefinition> GestureList;
+
 class MouseGestureRecognizer
 {
 public:
-    MouseGestureRecognizer( int minimumMovement = 5, double minimumMatch = 0.9 );
+    MouseGestureRecognizer( int minimumMovement = 5, double minimumMatch = 0.9, bool allowDiagonals = false );
     ~MouseGestureRecognizer();
 
     void addGestureDefinition( const GestureDefinition &gesture );
@@ -87,6 +100,11 @@ public:
 
 private:
     void recognizeGesture();
+    
+    static PosList limitDirections( const PosList &positions, bool allowDiagnonals );
+    static PosList simplify( const PosList &positions );
+    static PosList removeShortest( const PosList &positions );
+    static int calcLength( const PosList &positions );
 
     struct Private;
     Private *d;

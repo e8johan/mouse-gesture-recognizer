@@ -54,6 +54,10 @@ class GestureCallbackToSignal;
  *    Right
  *    AnyHorizontal (Left or Right)
  *    AnyVertical (Up or Down)
+ *    UpLeft (diagnonal)
+ *    UpRight (diagnonal)
+ *    DownLeft (diagnonal)
+ *    DownRight (diagnonal)
  *
  *  In addition to these, the NoMatch enum is
  *  available. A gesture holding only the NoMatch
@@ -68,6 +72,10 @@ using Gesture::Left;
 using Gesture::Right;
 using Gesture::AnyHorizontal;
 using Gesture::AnyVertical;
+using Gesture::UpLeft;
+using Gesture::UpRight;
+using Gesture::DownLeft;
+using Gesture::DownRight;
 using Gesture::NoMatch;
 
 /*
