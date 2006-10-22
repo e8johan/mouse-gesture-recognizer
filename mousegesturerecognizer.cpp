@@ -295,17 +295,32 @@ PosList MouseGestureRecognizer::simplify( const PosList &positions )
         {
             bool joined = false;
 
-            if( (lastdx > 0 && ii->x > 0) || (lastdx < 0 && ii->x < 0) )
-            {
-                lastdx += ii->x;
-                joined = true;
-            }
-
-            if( (lastdy > 0 && ii->y > 0) || (lastdy < 0 && ii->y < 0) )
-            {
-                lastdy += ii->y;
-                joined = true;
-            }
+            //horizontal lines
+			if( ((lastdx > 0 && ii->x > 0) || (lastdx < 0 && ii->x < 0)) && (lastdy == 0 && ii->y == 0))
+			{
+				lastdx += ii->x;
+				joined = true;
+			}
+			//vertical
+			if( ((lastdy > 0 && ii->y > 0) || (lastdy < 0 && ii->y < 0)) && (lastdx == 0 && ii->x == 0))
+			{
+				lastdy += ii->y;
+				joined = true;
+			}
+			//down right/left
+			if( ( (lastdx > 0 && ii->x > 0) || (lastdx < 0 && ii->x < 0) ) && (lastdy > 0 && ii->y > 0))
+			{
+				lastdx += ii->x;
+				lastdy += ii->y;
+				joined = true;
+			}
+			//up left/right
+			if( ( (lastdx > 0 && ii->x > 0) || (lastdx < 0 && ii->x < 0) ) && (lastdy < 0 && ii->y < 0))
+			{
+				lastdx += ii->x;
+				lastdy += ii->y;
+				joined = true;
+			}
 
             if( !joined )
             {
