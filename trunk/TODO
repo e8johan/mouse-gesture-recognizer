@@ -1,1 +1,5 @@
+* quard 21.24 GMT +0 22 October 2006
+Updated simplify function to provide diagonals support
+
+
 I have started to implement support for diagonal movements, but the simplify function will need more work.
