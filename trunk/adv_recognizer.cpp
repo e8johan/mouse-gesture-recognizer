@@ -76,24 +76,14 @@ void RealTimeMouseGestureRecognizer::addPoint(int x, int y)
             }
 		}     
             
-        if( maxIndex == -1 )
-		{
-			dx = dy = 0;	  
-		}
-        else
-        {
-			dx = _directions[maxIndex][0]; // * abs(sqrt(maxValue))
-            dy = _directions[maxIndex][1]; // * abs(sqrt(maxValue))
-        }
-
 		direction = dirsD[maxIndex];
 
 		if(direction != lastDirection)
 		{
 			directions.push_back(direction);
-			hge->System_Log("->");
+			//hge->System_Log("->");
 			recognizeGesture();
-			hge->System_Log("<-");
+			//hge->System_Log("<-");
 		}
 	
 
@@ -149,7 +139,7 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 	
 	for( GestureList::const_iterator gi = gestures.begin(); gi != gestures.end(); ++gi )
 	{
-		hge->System_Log("trying gesture %s",gi->name.c_str());
+		//hge->System_Log("trying gesture %s",gi->name.c_str());
 		int readIndex = directions.getReadPointer();
 		bool match = true;
     
@@ -158,7 +148,7 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 			for( DirectionList::const_iterator di = gi->directions.begin(); di != gi->directions.end() && match; ++di)
 			{
 				Direction d = directions.pop();
-				hge->System_Log("\t%d comparing %s with %s",directions.getReadPointer(),DirectionToName(*di).c_str(),DirectionToName(d).c_str());
+				//hge->System_Log("\t%d comparing %s with %s",directions.getReadPointer(),DirectionToName(*di).c_str(),DirectionToName(d).c_str());
 				if(*di != d)
 				{
 					match = false;
@@ -167,9 +157,8 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 
 			if(match)
 			{
-				hge->System_Log("gesture is \"%s\"",gi->name.c_str());
-				name = gi->name;
-				
+				//hge->System_Log("gesture is \"%s\"",gi->name.c_str());
+				name = gi->name;	
 				return;
 			}
 			else
@@ -180,8 +169,10 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 		catch(std::exception)
 		{
 			name = "No match";
-			hge->System_Log("exception");
+			//hge->System_Log("exception");
 			directions.setReadPointerTo(readIndex);
 		}
 	}
+
+	directions.pop();
 }
