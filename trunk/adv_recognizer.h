@@ -16,16 +16,13 @@ public:
 
     void addPoint( int x, int y );
     void abortGesture();
-
-	std::string getGestureName() { return name; }
-	std::string getLastDirectionName() { return DirectionToName(lastDirection); }
 private:
-	std::string DirectionToName(Direction d);
+	
     void recognizeGesture();
 
 	RingBuffer<Direction> directions;
     GestureList gestures;
-	std::string name;
+	
 
     int minimumMovement2;
     double minimumMatch;

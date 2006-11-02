@@ -16,17 +16,6 @@ RealTimeMouseGestureRecognizer::~RealTimeMouseGestureRecognizer()
     
 }
 
-const std::string dirs[8] =
-{
-	"Down",
-	"Up",
-	"Right",
-	"Left",
-	"Down Right",
-	"Down Left",
-	"Up Left",
-	"Up Right"
-};
 
 const Direction dirsD[8] = 
 {
@@ -81,9 +70,7 @@ void RealTimeMouseGestureRecognizer::addPoint(int x, int y)
 		if(direction != lastDirection)
 		{
 			directions.push_back(direction);
-			//hge->System_Log("->");
 			recognizeGesture();
-			//hge->System_Log("<-");
 		}
 	
 
@@ -111,35 +98,14 @@ void RealTimeMouseGestureRecognizer::clearGestureDefinitions()
 {
     gestures.clear();
 }
-std::string RealTimeMouseGestureRecognizer::DirectionToName(Direction d)
-{
-	if(d == Up)
-		return std::string("Up");
-	if(d == Down)
-		return std::string("Down");
-	if(d == Right)
-		return std::string("Right");
-	if(d == Left)
-		return std::string("Left");
-	if(d == DownRight)
-		return std::string("DownRight");
-	if(d == DownLeft)
-		return std::string("DownLeft");
-	if(d == UpRight)
-		return std::string("UpRight");
-	if(d == UpLeft)
-		return std::string("UpLeft");
-	
-	return std::string("Unknow");
-	
-}
+
 void RealTimeMouseGestureRecognizer::recognizeGesture()
 {
-	name = "No match";
+	int first = gestures.size();	
 	
 	for( GestureList::const_iterator gi = gestures.begin(); gi != gestures.end(); ++gi )
 	{
-		//hge->System_Log("trying gesture %s",gi->name.c_str());
+
 		int readIndex = directions.getReadPointer();
 		bool match = true;
     
@@ -148,7 +114,6 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 			for( DirectionList::const_iterator di = gi->directions.begin(); di != gi->directions.end() && match; ++di)
 			{
 				Direction d = directions.pop();
-				//hge->System_Log("\t%d comparing %s with %s",directions.getReadPointer(),DirectionToName(*di).c_str(),DirectionToName(d).c_str());
 				if(*di != d)
 				{
 					match = false;
@@ -157,22 +122,26 @@ void RealTimeMouseGestureRecognizer::recognizeGesture()
 
 			if(match)
 			{
-				//hge->System_Log("gesture is \"%s\"",gi->name.c_str());
-				name = gi->name;	
+				if(gi->callbackClass)
+				{
+					gi->callbackClass->callback();
+				}
 				return;
 			}
 			else
 			{
+				first--;	
 				directions.setReadPointerTo(readIndex);
 			}
 		}
-		catch(std::exception)
+		catch(std::exception e)
 		{
-			name = "No match";
-			//hge->System_Log("exception");
 			directions.setReadPointerTo(readIndex);
 		}
 	}
 
-	directions.pop();
+	if(first == 0)
+	{
+		directions.pop();
+	}  
 }
