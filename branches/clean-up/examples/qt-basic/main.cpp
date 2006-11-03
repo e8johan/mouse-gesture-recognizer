@@ -45,7 +45,7 @@
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    QjtMouseGestureFilter filter( false );
+    QjtMouseGestureFilter filter();
     MainWindow mw;
   
     QjtMouseGesture *g;
