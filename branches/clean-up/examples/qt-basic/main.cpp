@@ -45,9 +45,9 @@
 int main( int argc, char **argv )
 {
     QApplication app( argc, argv );
-    QjtMouseGestureFilter filter( true );
+    QjtMouseGestureFilter filter( false );
     MainWindow mw;
-
+  
     QjtMouseGesture *g;
     DirectionList dl;
 
@@ -60,13 +60,6 @@ int main( int argc, char **argv )
     /* Set all by moving up-left */
     dl.clear();
     dl << Up << Left;
-    g = new QjtMouseGesture( dl, &filter );
-    filter.addGesture( g );
-    mw.connect( g, SIGNAL(gestured()), SLOT(setAll()) );
-
-    /* Set all by moving diagonaly up right */
-    dl.clear();
-    dl << UpRight;
     g = new QjtMouseGesture( dl, &filter );
     filter.addGesture( g );
     mw.connect( g, SIGNAL(gestured()), SLOT(setAll()) );

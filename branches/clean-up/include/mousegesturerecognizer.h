@@ -39,6 +39,7 @@
 #define MOUSEGESTURERECOGNIZER_H
 
 #include <list>
+#include <vector>
 
 namespace Gesture {
 

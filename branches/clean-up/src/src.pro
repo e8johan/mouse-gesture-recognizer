@@ -32,7 +32,17 @@
 # OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-TEMPLATE = subdirs
+TEMPLATE = lib
+VERSION = 0.2.0
+TARGET = mgr
+DESTDIR = ../lib
+INCLUDEPATH = ../include
 
-SUBDIRS = src \ 
-          examples
+HEADERS += ../include/QjtMouseGesture.h \
+           ../include/QjtMouseGestureFilter.h
+
+SOURCES += mousegesturerecognizer.cpp \
+           QjtMouseGesture.cpp \
+           QjtMouseGestureFilter.cpp
+           
+# SOURCES += adv_recognizer.cpp           
