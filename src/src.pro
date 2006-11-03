@@ -34,15 +34,15 @@
 
 TEMPLATE = lib
 VERSION = 0.2.0
-TARGET = mgr
+TARGET = mgesturer
 DESTDIR = ../lib
 INCLUDEPATH = ../include
+CONFIG += staticlib
 
 HEADERS += ../include/QjtMouseGesture.h \
            ../include/QjtMouseGestureFilter.h
 
 SOURCES += mousegesturerecognizer.cpp \
            QjtMouseGesture.cpp \
-           QjtMouseGestureFilter.cpp
-           
-# SOURCES += adv_recognizer.cpp           
+           QjtMouseGestureFilter.cpp #\
+#           adv_recognizer.cpp           

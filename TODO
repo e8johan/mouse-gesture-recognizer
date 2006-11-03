@@ -1,1 +1,6 @@
-I have started to implement support for diagonal movements, but the simplify function will need more work.
+* Clean up the recognizer classes to share as much code as 
+  possible between the real time recognizer and the old gesturer.
+  
+* Create more examples.
+
+* Create a GTK+ "binding".
