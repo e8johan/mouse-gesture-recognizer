@@ -66,10 +66,12 @@ public:
 
 	void push_back(T item)
 	{
+/*
 		if(overflow)
 		{
 			throw std::exception("container overflow!");
 		}
+*/
 
 		array[write++] = item;
 		if( write >= size ) write = 0;
@@ -81,10 +83,13 @@ public:
 	}
 	T &pop()
 	{
+/*
 		if ( empty )
 		{
 			throw std::exception("container is empty");
 		}
+*/
+
 		T elem = array[ read++ ];
 		if ( read >= size ) read = 0;
 		overflow = false;

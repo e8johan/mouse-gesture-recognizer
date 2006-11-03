@@ -39,7 +39,7 @@
 #ifndef REAL_TIME_RECOGNIZER_H
 #define REAL_TIME_RECOGNIZER_H
 
-#include "recognizer.h"
+#include "mousegesturerecognizer.h"
 #include "ring_buffer.h"
 
 namespace Gesture

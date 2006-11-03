@@ -35,7 +35,7 @@
 TEMPLATE = app
 INCLUDEPATH += ../../include
 
-LIBS += -L../../lib -lmgr
+LIBS += -L../../lib -lmgesturer
 
 # Input
 HEADERS += mainwindow.h
