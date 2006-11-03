@@ -34,5 +34,4 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS = src \ 
-          examples
+SUBDIRS = qt-basic

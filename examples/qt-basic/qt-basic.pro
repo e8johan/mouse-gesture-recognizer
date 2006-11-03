@@ -32,7 +32,11 @@
 # OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-TEMPLATE = subdirs
+TEMPLATE = app
+INCLUDEPATH += ../../include
 
-SUBDIRS = src \ 
-          examples
+LIBS += -L../../lib -lmgr
+
+# Input
+HEADERS += mainwindow.h
+SOURCES += main.cpp mainwindow.cpp
