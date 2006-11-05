@@ -98,7 +98,7 @@ public:
     void addPoint( int x, int y );
     void endGesture( int x, int y );
     void abortGesture();
-
+    PosList currentPath() const;
 private:
     void recognizeGesture();
     
@@ -114,3 +114,4 @@ private:
 };
 
 #endif // MOUSEGESTURERECOGNIZER_H
+

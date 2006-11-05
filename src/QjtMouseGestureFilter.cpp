@@ -37,7 +37,9 @@
 
 #include "QjtMouseGestureFilter.h"
 #include "QjtMouseGesture.h"
-
+#include <QWidget>
+#include <QPainter>
+#include <QPixmap>
 #include "mousegesturerecognizer.h"
 
 /*
@@ -76,7 +78,7 @@ public:
     bool tracing;
 
     Gesture::MouseGestureRecognizer *mgr;
-
+    QPixmap px;
     GestureList gestures;
     BridgeList bridges;
 };
@@ -149,6 +151,10 @@ bool QjtMouseGestureFilter::eventFilter( QObject *obj, QEvent *event )
 
         break;
 
+    case QEvent::Paint:
+        if(paintEvent(obj, dynamic_cast<QPaintEvent*>(event)))
+            return true;
+
     default:
         break;
     }
@@ -160,9 +166,9 @@ bool QjtMouseGestureFilter::mouseButtonPressEvent( QObject *obj, QMouseEvent *ev
 {
     if( event->button() == d->gestureButton )
     {
+    	d->px = QPixmap::grabWidget(static_cast<QWidget*>(obj));
         d->mgr->startGesture( event->pos().x(), event->pos().y() );
         d->tracing = true;
-
         return true;
     }
     else
@@ -175,7 +181,8 @@ bool QjtMouseGestureFilter::mouseButtonReleaseEvent( QObject *obj, QMouseEvent *
     {
         d->mgr->endGesture( event->pos().x(), event->pos().y() );
         d->tracing = false;
-
+        d->px = QPixmap();
+	static_cast<QWidget*>(obj)->update();
         return true;
     }
     else
@@ -187,9 +194,33 @@ bool QjtMouseGestureFilter::mouseMoveEvent( QObject *obj, QMouseEvent *event )
     if( d->tracing )
     {
         d->mgr->addPoint( event->pos().x(), event->pos().y() );
-
+	static_cast<QWidget*>(obj)->update();
         return true;
     }
     else
         return false;
+}
+
+bool QjtMouseGestureFilter::paintEvent( QObject *obj, QPaintEvent *event ){
+	if( d->tracing ){
+		QWidget *wid = static_cast<QWidget*>(obj);
+		QPainter painter(wid);
+		painter.drawPixmap(0,0,d->px);
+		const Gesture::PosList &points = d->mgr->currentPath();
+		painter.save();
+		QPen pe;
+		pe.setColor(Qt::red);
+		pe.setWidth(2);
+		painter.setPen(pe);
+		QVector<QPoint> pointPairs;
+		for(Gesture::PosList::const_iterator iter = points.begin(); iter!=points.end(); ++iter)
+			pointPairs << QPoint(iter->x, iter->y);
+		painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.drawPolyline(&pointPairs[0], pointPairs.count());
+		painter.restore();
+		painter.end();
+		return true;
+	}
+	else
+	  return false;
 }
