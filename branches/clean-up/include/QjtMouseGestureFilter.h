@@ -84,9 +84,10 @@ private:
     bool mouseButtonPressEvent( QObject *obj, QMouseEvent *event );
     bool mouseButtonReleaseEvent( QObject *obj, QMouseEvent *event );
     bool mouseMoveEvent( QObject *obj, QMouseEvent *event );
-
+    bool paintEvent( QObject *obj, QPaintEvent *event );
     class Private;
     Private *d;
 };
 
 #endif // QJTMOUSEGESTUREFILTER_H
+

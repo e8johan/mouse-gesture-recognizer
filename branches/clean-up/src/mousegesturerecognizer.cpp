@@ -112,6 +112,10 @@ void MouseGestureRecognizer::addPoint( int x, int y )
     }
 }
 
+PosList MouseGestureRecognizer::currentPath() const{
+	return d->positions;
+}
+
 void MouseGestureRecognizer::recognizeGesture()
 {
     PosList directions = simplify( limitDirections( d->positions, d->allowDiagonals ) );
@@ -402,3 +406,4 @@ int MouseGestureRecognizer::calcLength( const PosList &positions )
 
     return res;
 }
+
