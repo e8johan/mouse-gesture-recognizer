@@ -44,5 +44,5 @@ HEADERS += ../include/QjtMouseGesture.h \
 
 SOURCES += mousegesturerecognizer.cpp \
            QjtMouseGesture.cpp \
-           QjtMouseGestureFilter.cpp #\
-#           adv_recognizer.cpp           
+           QjtMouseGestureFilter.cpp \
+           adv_recognizer.cpp           
