@@ -83,7 +83,7 @@ struct Pos
 };
 
 typedef std::vector<Pos> PosList;
-typedef std::list<GestureDefinition> GestureList;
+typedef std::vector<GestureDefinition> GestureList;
 
 class MouseGestureRecognizer
 {
