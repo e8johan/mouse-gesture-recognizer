@@ -89,13 +89,14 @@ public:
 			throw std::exception("container is empty");
 		}
 */
-
-		T elem = array[ read++ ];
+		int tmp = read;
+		read++;
+		
 		if ( read >= size ) read = 0;
 		overflow = false;
 		if ( write == read )
 			empty = true;
-		return elem; 
+		return array[tmp]; 
 	}
 
 	void setReadPointerTo(int index)
