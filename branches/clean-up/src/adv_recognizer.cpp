@@ -48,6 +48,7 @@ RealTimeMouseGestureRecognizer::RealTimeMouseGestureRecognizer( int minimumMovem
 	directions.resize(64);	
 	lastX = 0;
 	lastY = 0;
+	lastDirection = NoMatch;
 }
 
 RealTimeMouseGestureRecognizer::~RealTimeMouseGestureRecognizer()
