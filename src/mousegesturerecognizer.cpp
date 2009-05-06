@@ -252,7 +252,7 @@ PosList MouseGestureRecognizer::limitDirections( const PosList &positions, bool 
                 int value = dx * directions[i][0] + dy * directions[i][1];
                 if( value > maxValue )
                 {
-                    value = maxValue;
+                    maxValue = value;
                     maxIndex = i;
                 }
             }    
